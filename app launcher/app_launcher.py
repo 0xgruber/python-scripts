@@ -8,6 +8,7 @@ DESCRIPTION:
     application data (profiles, cache, etc.) if an app hasn't been used for a specified
     number of days. This is particularly useful for managing browser profiles and other
     applications that accumulate data over time.
+    
 
     Features:
     - Launch applications and track usage timestamps
