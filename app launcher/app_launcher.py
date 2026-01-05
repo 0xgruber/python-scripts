@@ -9,7 +9,6 @@ DESCRIPTION:
     number of days. This is particularly useful for managing browser profiles and other
     applications that accumulate data over time.
     
-
     Features:
     - Launch applications and track usage timestamps
     - Automatic cleanup of idle application data
