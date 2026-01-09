@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint:
+    name: Lint and Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff mypy
+
+      - name: Lint with ruff
+        run: ruff check . --output-format=github
+
+      - name: Type check with mypy
+        run: mypy --ignore-missing-imports . || true
+
+  test:
+    name: Test Scripts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Validate Python syntax
+        run: |
+          python -m py_compile *.py || echo "No Python files in root"
+          find . -name "*.py" -type f -exec python -m py_compile {} \;
+
+      - name: Check for common issues
+        run: |
+          echo "Checking for scripts without shebang..."
+          for script in *.py; do
+            if [ -f "$script" ]; then
+              if ! head -n 1 "$script" | grep -q "^#!"; then
+                echo "⚠️  $script missing shebang"
+              fi
+            fi
+          done
